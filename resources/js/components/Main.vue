@@ -3,7 +3,7 @@
 
 <template>
   
-    <div class="container">
+    <div class="container mt-5">
 
         <div class="row">
        
@@ -24,7 +24,27 @@
                 </div>
        
             </div>
-       
+            
+            <nav aria-label="Page navigation example " class="mx-auto mt-5">
+            
+                <ul class="pagination ">
+            
+                    <li class="page-item" :class=" {'disabled' : currentPage == 1 } ">
+                       
+                        <button class="page-link" href="#" @click="getPosts(currentPage - 1)">Previous</button>
+
+                    </li>
+
+            
+                    <li class="page-item" :class=" {'disabled' : currentPage == lastPage } ">
+                        
+                        <button class="page-link" href="#" @click="getPosts(currentPage + 1)">Next</button>
+
+                    </li>
+            
+                </ul>
+            
+            </nav>
        
         </div>
          
@@ -45,7 +65,11 @@
 
                 chiamataApi: 'http://localhost:8000/api/posts',
 
-                posts: []
+                posts: [],
+
+                currentPage: 1,
+
+                lastPage: null
 
             }
 
@@ -59,16 +83,29 @@
 
         methods: {
 
-            getPosts() {
+            getPosts(pagePost) {
 
-                axios.get(this.chiamataApi)
+                axios.get(this.chiamataApi, {
 
-                     .then(response => {
-                         
-                        this.posts = response.data.result;
-                     })
+                    params: {
 
-                     .catch();
+                        page: pagePost
+
+                    }
+
+                })
+
+                    .then(response => {
+                        
+                        this.posts = response.data.result.data;
+
+                        this.currentPage = response.data.result.current_page;
+
+                        this.lastPage = response.data.result.last_page;
+                    
+                    })
+
+                    .catch();
 
             }
 
